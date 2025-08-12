@@ -518,8 +518,8 @@
             task_deadline: task.deadline,
             task_description: task.description || ''
           };
-          // Replace service_dzgaiqf and template_fk2yow with your EmailJS identifiers.
-          emailjs.send('service_dzgaiqf', 'template_fk2yow', templateParams)
+          // Replace service_dzgaiqf and template_fj1rfoh with your EmailJS identifiers.
+          emailjs.send('service_dzgaiqf', 'template_fj1rfoh', templateParams)
             .then(function (response) {
               console.log('SUCCESS! Task assignment email sent', response.status, response.text);
             }, function (error) {
@@ -549,7 +549,7 @@
                     task_deadline: task.deadline,
                     task_description: task.description || ''
                   };
-                  emailjs.send('service_dzgaiqf', 'template_fk2yow', params)
+                  emailjs.send('service_dzgaiqf', 'template_fj1rfoh', params)
                     .then(function (response) {
                       console.log('Reminder email sent', response.status, response.text);
                     }, function (error) {
