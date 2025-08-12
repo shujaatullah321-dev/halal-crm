@@ -374,11 +374,11 @@
     <!-- Include EmailJS SDK for sending emails directly from the browser.  -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">
-      // Initialize EmailJS with your public key.  Replace YOUR_PUBLIC_KEY with the key
+      // Initialize EmailJS with your public key.  Replace SYlgS9e9uxGs1BfT with the key
       // from your EmailJS dashboard.  See EmailJS documentation for details【846196117822111†L95-L106】.
       (function () {
         emailjs.init({
-          publicKey: 'YOUR_PUBLIC_KEY',
+          publicKey: 'SYlgS9e9uxGs1BfT',
         });
       })();
     </script>
@@ -518,8 +518,8 @@
             task_deadline: task.deadline,
             task_description: task.description || ''
           };
-          // Replace YOUR_SERVICE_ID and YOUR_TEMPLATE_ID with your EmailJS identifiers.
-          emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+          // Replace service_dzgaiqf and template_fk2yow with your EmailJS identifiers.
+          emailjs.send('service_dzgaiqf', 'template_fk2yow', templateParams)
             .then(function (response) {
               console.log('SUCCESS! Task assignment email sent', response.status, response.text);
             }, function (error) {
@@ -549,7 +549,7 @@
                     task_deadline: task.deadline,
                     task_description: task.description || ''
                   };
-                  emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', params)
+                  emailjs.send('service_dzgaiqf', 'template_fk2yow', params)
                     .then(function (response) {
                       console.log('Reminder email sent', response.status, response.text);
                     }, function (error) {
