@@ -244,6 +244,43 @@
         background-color: var(--accent-color);
       }
 
+      /* Login section styling */
+      .login-section {
+        display: none;
+        padding: 2rem;
+      }
+      .login-container {
+        background-color: var(--card-bg);
+        padding: 2rem;
+        max-width: 400px;
+        margin: 2rem auto;
+        border-radius: var(--border-radius);
+        text-align: center;
+      }
+      .login-container input {
+        width: 100%;
+        padding: 0.75rem;
+        margin: 0.5rem 0;
+        border: none;
+        border-radius: var(--border-radius);
+        font-size: 1rem;
+      }
+      .login-container button {
+        width: 100%;
+        padding: 0.75rem;
+        margin-top: 1rem;
+        background-color: var(--accent-color);
+        color: #fff;
+        border: none;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        font-size: 1rem;
+        transition: var(--transition);
+      }
+      .login-container button:hover {
+        background-color: var(--hover-color);
+      }
+
       /* Footer */
       .footer {
         text-align: center;
@@ -262,8 +299,22 @@
         <li><a href="#team">Team</a></li>
         <li><a href="#tasks">Tasks</a></li>
         <li><a href="#messages">Messages</a></li>
+        <li><a href="#" id="logoutLink" style="display:none;">Logout</a></li>
       </ul>
     </nav>
+
+    <!-- Login / Registration Section -->
+    <section id="login" class="login-section">
+      <div class="login-container">
+        <h2>Login or Register</h2>
+        <form id="loginForm">
+          <input type="text" id="loginName" placeholder="Name (for new users)" />
+          <input type="email" id="loginEmail" placeholder="Email" required />
+          <input type="password" id="loginPassword" placeholder="Password" required />
+          <button type="submit">Continue</button>
+        </form>
+      </div>
+    </section>
 
     <!-- Home Section -->
     <section id="home" class="section active">
@@ -403,6 +454,99 @@
           });
           const el = document.getElementById(target);
           if (el) el.classList.add('active');
+        }
+
+        /* User authentication and session management */
+        function getUsers() {
+          return JSON.parse(localStorage.getItem('users')) || [];
+        }
+        function setUsers(users) {
+          localStorage.setItem('users', JSON.stringify(users));
+        }
+        function getCurrentUser() {
+          return localStorage.getItem('currentUserEmail');
+        }
+        function setCurrentUser(email) {
+          localStorage.setItem('currentUserEmail', email);
+        }
+        function clearCurrentUser() {
+          localStorage.removeItem('currentUserEmail');
+        }
+        function showLogin() {
+          const navbar = document.querySelector('.navbar');
+          if (navbar) navbar.style.display = 'none';
+          document.querySelectorAll('.section').forEach(function (sec) {
+            sec.style.display = 'none';
+          });
+          const loginSection = document.getElementById('login');
+          if (loginSection) loginSection.style.display = 'block';
+        }
+        function initAppAfterLogin() {
+          const navbar = document.querySelector('.navbar');
+          if (navbar) navbar.style.display = '';
+          const loginSection = document.getElementById('login');
+          if (loginSection) loginSection.style.display = 'none';
+          document.querySelectorAll('.section').forEach(function (sec) {
+            sec.style.display = '';
+          });
+          const logoutLinkEl = document.getElementById('logoutLink');
+          if (logoutLinkEl) logoutLinkEl.style.display = '';
+          const currentEmail = getCurrentUser();
+          if (currentEmail) {
+            const users = getUsers();
+            const user = users.find(function (u) { return u.email === currentEmail; });
+            if (user) {
+              let teamList = getTeam();
+              const existing = teamList.find(function (m) { return m.email === currentEmail; });
+              if (!existing) {
+                teamList.push({ name: user.name, role: 'Member', email: user.email });
+                setTeam(teamList);
+              }
+            }
+          }
+          renderTeam();
+          renderTasks();
+          updateTeamDependent();
+          showSection('home');
+        }
+        // Login form event
+        const loginFormEl = document.getElementById('loginForm');
+        if (loginFormEl) {
+          loginFormEl.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('loginName').value.trim();
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const pwd = document.getElementById('loginPassword').value;
+            if (!email || !pwd) return;
+            let users = getUsers();
+            let user = users.find(function (u) { return u.email === email; });
+            if (user) {
+              if (user.password !== pwd) {
+                alert('Incorrect password');
+                return;
+              }
+            } else {
+              if (!name) {
+                alert('Name is required for new users');
+                return;
+              }
+              user = { name: name, email: email, password: pwd };
+              users.push(user);
+              setUsers(users);
+            }
+            setCurrentUser(email);
+            loginFormEl.reset();
+            initAppAfterLogin();
+          });
+        }
+        // Logout link event
+        const logoutEl = document.getElementById('logoutLink');
+        if (logoutEl) {
+          logoutEl.addEventListener('click', function (e) {
+            e.preventDefault();
+            clearCurrentUser();
+            showLogin();
+          });
         }
 
         /* Utility functions for localStorage */
@@ -655,10 +799,13 @@
           });
         }
 
-        // Initial render
-        renderTeam();
-        renderTasks();
-        updateTeamDependent();
+        // Authentication gating: if a user is not logged in, show the login form.  Otherwise
+        // initialize the app and render data for the signed-in user.
+        if (!getCurrentUser()) {
+          showLogin();
+        } else {
+          initAppAfterLogin();
+        }
       });
     </script>
   </body>
