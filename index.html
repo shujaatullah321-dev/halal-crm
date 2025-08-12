@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Halal CRM</title>
+    <style>
+      /* Root variables for consistent theming */
+      :root {
+        --bg-color: #141414;
+        --card-bg: #1f1f1f;
+        --text-color: #ffffff;
+        --accent-color: #e50914;
+        --hover-color: #f40612;
+        --border-radius: 0.5rem;
+        --transition: 0.3s;
+        --max-width: 1200px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: Arial, Helvetica, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Navigation bar */
+      .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 2rem;
+        background-color: #000000;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .navbar .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--accent-color);
+      }
+      .navbar .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 1.5rem;
+      }
+      .navbar .nav-links li a {
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 1rem;
+        transition: color var(--transition);
+      }
+      .navbar .nav-links li a:hover {
+        color: var(--accent-color);
+      }
+
+      /* Sections */
+      .section {
+        display: none;
+      }
+      .section.active {
+        display: block;
+      }
+
+      /* Hero section */
+      .hero {
+        position: relative;
+        height: 60vh;
+        background: linear-gradient(135deg, #1f1f1f 0%, #000000 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .hero-overlay {
+        background-color: rgba(0, 0, 0, 0.6);
+        padding: 2rem;
+        text-align: center;
+        border-radius: var(--border-radius);
+      }
+      .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+      .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+      }
+      .cta {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background-color: var(--accent-color);
+        color: var(--text-color);
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color var(--transition);
+      }
+      .cta:hover {
+        background-color: var(--hover-color);
+      }
+
+      /* Features section */
+      .features {
+        max-width: var(--max-width);
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      .features h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+      }
+      .feature-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+      }
+      .feature-card {
+        background-color: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        transition: transform var(--transition), background-color var(--transition);
+      }
+      .feature-card h3 {
+        font-size: 1.4rem;
+        margin-bottom: 0.5rem;
+        color: var(--accent-color);
+      }
+      .feature-card p {
+        font-size: 1rem;
+        line-height: 1.4;
+      }
+      .feature-card:hover {
+        transform: translateY(-5px);
+        background-color: #2a2a2a;
+      }
+
+      /* Generic container for forms/tables */
+      .container {
+        max-width: var(--max-width);
+        margin: 2rem auto;
+        padding: 1rem;
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius);
+      }
+      form {
+        margin-bottom: 2rem;
+      }
+      form input,
+      form select,
+      form textarea {
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        border: none;
+        border-radius: var(--border-radius);
+      }
+      form button {
+        padding: 0.5rem 1rem;
+        background-color: var(--accent-color);
+        border: none;
+        border-radius: var(--border-radius);
+        color: var(--text-color);
+        cursor: pointer;
+        transition: background-color var(--transition);
+      }
+      form button:hover {
+        background-color: var(--hover-color);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 2rem;
+      }
+      table th,
+      table td {
+        border: 1px solid #333333;
+        padding: 0.75rem;
+        text-align: left;
+      }
+      table th {
+        background-color: #222222;
+      }
+      table td button {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+        border: none;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+      }
+      table td .msg-btn {
+        background-color: var(--accent-color);
+        color: var(--text-color);
+      }
+      table td .msg-btn:hover {
+        background-color: var(--hover-color);
+      }
+      table td .email-btn {
+        background-color: #0061a8;
+        color: var(--text-color);
+        margin-left: 0.3rem;
+      }
+      table td .email-btn:hover {
+        background-color: #004b82;
+      }
+
+      /* Messaging area */
+      .messages-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .message-history {
+        flex-grow: 1;
+        background-color: #222222;
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        overflow-y: auto;
+        height: 300px;
+      }
+      .message-item {
+        margin-bottom: 0.5rem;
+      }
+      .message-item.self {
+        text-align: right;
+      }
+      .message-item .msg-content {
+        display: inline-block;
+        padding: 0.5rem 0.75rem;
+        border-radius: var(--border-radius);
+        background-color: #333333;
+        max-width: 60%;
+      }
+      .message-item.self .msg-content {
+        background-color: var(--accent-color);
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        padding: 1rem 0;
+        background-color: #000000;
+        color: #666666;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo">Halal&nbsp;CRM</div>
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#team">Team</a></li>
+        <li><a href="#tasks">Tasks</a></li>
+        <li><a href="#messages">Messages</a></li>
+      </ul>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="section active">
+      <header class="hero">
+        <div class="hero-overlay">
+          <h1>Welcome to Halal CRM</h1>
+          <p>All-in-one platform to manage your team, projects and communication.</p>
+          <a class="cta" href="#team">Get Started</a>
+        </div>
+      </header>
+      <main class="features">
+        <h2>Key Features</h2>
+        <div class="feature-row">
+          <div class="feature-card">
+            <h3>Team Management</h3>
+            <p>Easily add and organize team members, track roles and contact details.</p>
+          </div>
+          <div class="feature-card">
+            <h3>Task &amp; Project Tracking</h3>
+            <p>Assign tasks, set deadlines and monitor progress in a simple dashboard.</p>
+          </div>
+          <div class="feature-card">
+            <h3>Messaging &amp; Email</h3>
+            <p>Keep everyone on the same page with built‑in messaging and quick email links.</p>
+          </div>
+          <div class="feature-card">
+            <h3>Reports &amp; Analytics</h3>
+            <p>Gain insight into productivity and workload with easy to read reports.</p>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="section">
+      <main class="container">
+        <h1>Team Members</h1>
+        <form id="addTeamForm">
+          <input type="text" id="memberName" placeholder="Name" required />
+          <input type="text" id="memberRole" placeholder="Role" required />
+          <input type="email" id="memberEmail" placeholder="Email" required />
+          <button type="submit">Add Member</button>
+        </form>
+        <table id="teamTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Email</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </main>
+    </section>
+
+    <!-- Tasks Section -->
+    <section id="tasks" class="section">
+      <main class="container">
+        <h1>Tasks &amp; Projects</h1>
+        <form id="addTaskForm">
+          <input type="text" id="taskTitle" placeholder="Task Title" required />
+          <textarea id="taskDesc" placeholder="Description" rows="3"></textarea>
+          <select id="taskAssignee" required>
+            <option value="">Assign to...</option>
+          </select>
+          <input type="date" id="taskDeadline" required />
+          <button type="submit">Add Task</button>
+        </form>
+        <table id="tasksTable">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Assignee</th>
+              <th>Deadline</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </main>
+    </section>
+
+    <!-- Messages Section -->
+    <section id="messages" class="section">
+      <main class="container">
+        <h1>Messages</h1>
+        <div class="messages-container">
+          <select id="msgRecipient">
+            <option value="">Select team member...</option>
+          </select>
+          <div class="message-history" id="messageHistory"></div>
+          <form id="sendMessageForm">
+            <textarea id="messageInput" placeholder="Type your message..." rows="3" required></textarea>
+            <button type="submit">Send Message</button>
+          </form>
+        </div>
+      </main>
+    </section>
+
+    <footer class="footer">
+      <p>© 2025 Halal CRM. All rights reserved.</p>
+    </footer>
+
+    <script>
+      // Single-page navigation: show/hide sections based on anchor
+      document.addEventListener('DOMContentLoaded', function () {
+        const navLinks = document.querySelectorAll('.nav-links a');
+        navLinks.forEach(function (link) {
+          link.addEventListener('click', function (e) {
+            // Only handle internal anchors
+            const target = this.getAttribute('href').substring(1);
+            if (target) {
+              e.preventDefault();
+              showSection(target);
+            }
+          });
+        });
+
+        function showSection(target) {
+          document.querySelectorAll('.section').forEach(function (section) {
+            section.classList.remove('active');
+          });
+          const el = document.getElementById(target);
+          if (el) el.classList.add('active');
+        }
+
+        /* Utility functions for localStorage */
+        function getTeam() {
+          return JSON.parse(localStorage.getItem('team')) || [];
+        }
+        function setTeam(team) {
+          localStorage.setItem('team', JSON.stringify(team));
+        }
+        function getTasks() {
+          return JSON.parse(localStorage.getItem('tasks')) || [];
+        }
+        function setTasks(tasks) {
+          localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+        function getMessages() {
+          return JSON.parse(localStorage.getItem('messages')) || [];
+        }
+        function setMessages(msgs) {
+          localStorage.setItem('messages', JSON.stringify(msgs));
+        }
+
+        /* Populate drop-downs that depend on team list */
+        function populateAssignees() {
+          const select = document.getElementById('taskAssignee');
+          if (!select) return;
+          select.innerHTML = '<option value="">Assign to...</option>';
+          const team = getTeam();
+          team.forEach(function (member) {
+            const opt = document.createElement('option');
+            opt.value = member.email;
+            opt.textContent = `${member.name} (${member.role})`;
+            select.appendChild(opt);
+          });
+        }
+        function populateRecipients() {
+          const select = document.getElementById('msgRecipient');
+          if (!select) return;
+          select.innerHTML = '<option value="">Select team member...</option>';
+          const team = getTeam();
+          team.forEach(function (member) {
+            const opt = document.createElement('option');
+            opt.value = member.email;
+            opt.textContent = `${member.name} (${member.role})`;
+            select.appendChild(opt);
+          });
+        }
+        function updateTeamDependent() {
+          populateAssignees();
+          populateRecipients();
+        }
+
+        /* Team management */
+        const addTeamForm = document.getElementById('addTeamForm');
+        const teamTableBody = document.querySelector('#teamTable tbody');
+        function renderTeam() {
+          teamTableBody.innerHTML = '';
+          const team = getTeam();
+          team.forEach(function (member) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${member.name}</td>
+                            <td>${member.role}</td>
+                            <td>${member.email}</td>
+                            <td>
+                              <button class="msg-btn" data-email="${member.email}">Message</button>
+                              <a class="email-btn" href="mailto:${member.email}">Email</a>
+                            </td>`;
+            teamTableBody.appendChild(tr);
+          });
+        }
+        if (addTeamForm) {
+          addTeamForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('memberName').value.trim();
+            const role = document.getElementById('memberRole').value.trim();
+            const email = document.getElementById('memberEmail').value.trim();
+            if (!name || !role || !email) return;
+            const team = getTeam();
+            team.push({ name: name, role: role, email: email });
+            setTeam(team);
+            this.reset();
+            renderTeam();
+            updateTeamDependent();
+          });
+        }
+        teamTableBody.addEventListener('click', function (e) {
+          if (e.target.matches('.msg-btn')) {
+            const email = e.target.getAttribute('data-email');
+            // Preselect recipient
+            document.getElementById('msgRecipient').value = email;
+            // Switch to messages section
+            showSection('messages');
+            loadMessages(email);
+          }
+        });
+
+        /* Tasks management */
+        const addTaskForm = document.getElementById('addTaskForm');
+        const tasksTableBody = document.querySelector('#tasksTable tbody');
+        function renderTasks() {
+          tasksTableBody.innerHTML = '';
+          const tasks = getTasks();
+          tasks.forEach(function (task, index) {
+            const assignee = getTeam().find(function (m) { return m.email === task.assignee; });
+            const assigneeName = assignee ? assignee.name : 'Unknown';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${task.title}</td>
+                            <td>${task.description}</td>
+                            <td>${assigneeName}</td>
+                            <td>${task.deadline}</td>
+                            <td>${task.status}</td>
+                            <td>${task.status !== 'Completed' ? `<button class="msg-btn" data-index="${index}">Complete</button>` : ''}</td>`;
+            tasksTableBody.appendChild(tr);
+          });
+        }
+        if (addTaskForm) {
+          addTaskForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const title = document.getElementById('taskTitle').value.trim();
+            const description = document.getElementById('taskDesc').value.trim();
+            const assignee = document.getElementById('taskAssignee').value;
+            const deadline = document.getElementById('taskDeadline').value;
+            if (!title || !assignee || !deadline) return;
+            const tasks = getTasks();
+            tasks.push({ title: title, description: description, assignee: assignee, deadline: deadline, status: 'Pending' });
+            setTasks(tasks);
+            this.reset();
+            renderTasks();
+          });
+        }
+        tasksTableBody.addEventListener('click', function (e) {
+          if (e.target.matches('.msg-btn')) {
+            const index = e.target.getAttribute('data-index');
+            const tasks = getTasks();
+            tasks[index].status = 'Completed';
+            setTasks(tasks);
+            renderTasks();
+          }
+        });
+
+        /* Messaging management */
+        const msgRecipientSelect = document.getElementById('msgRecipient');
+        const messageHistoryDiv = document.getElementById('messageHistory');
+        const sendMessageForm = document.getElementById('sendMessageForm');
+        const messageInput = document.getElementById('messageInput');
+        function loadMessages(email) {
+          messageHistoryDiv.innerHTML = '';
+          if (!email) return;
+          const msgs = getMessages().filter(function (m) { return m.to === email; });
+          msgs.forEach(function (msg) {
+            const item = document.createElement('div');
+            item.classList.add('message-item');
+            if (msg.from === 'self') {
+              item.classList.add('self');
+            }
+            const content = document.createElement('div');
+            content.classList.add('msg-content');
+            content.textContent = msg.body;
+            item.appendChild(content);
+            messageHistoryDiv.appendChild(item);
+          });
+          messageHistoryDiv.scrollTop = messageHistoryDiv.scrollHeight;
+        }
+        if (msgRecipientSelect) {
+          msgRecipientSelect.addEventListener('change', function () {
+            const email = this.value;
+            loadMessages(email);
+          });
+        }
+        if (sendMessageForm) {
+          sendMessageForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const to = msgRecipientSelect.value;
+            const body = messageInput.value.trim();
+            if (!to || !body) return;
+            const msgs = getMessages();
+            msgs.push({ to: to, from: 'self', body: body, timestamp: Date.now() });
+            setMessages(msgs);
+            messageInput.value = '';
+            loadMessages(to);
+          });
+        }
+
+        // Initial render
+        renderTeam();
+        renderTasks();
+        updateTeamDependent();
+      });
+    </script>
+  </body>
+</html>
